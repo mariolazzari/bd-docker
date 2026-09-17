@@ -118,3 +118,44 @@ docker volume rm ghost-vol
 docker ps -a
 docker volume ls
 ```
+
+## Help
+
+### Execute
+
+```sh
+docker --help
+docker help
+```
+
+### Exec
+
+```sh
+docker ps
+docker run -d -p 8965:80 docker/getting-started
+docker ps
+docker exec CONTAINER_ID ls
+docker exec f5b90270df5f  touch hacker.log
+docker exec f5b90270df5f  ls
+```
+
+### Exec Netstat
+
+```sh
+docker exec f5b90270df5f netstat -ltnp
+```
+
+### Live shell
+
+```sh
+docker exec -it CONTAINER_ID /bin/sh
+exit
+```
+
+## Networks
+
+### Offline
+
+```sh
+
+```
