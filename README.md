@@ -52,3 +52,69 @@ docker ps
 docker ps
 docker op 8cd796458931
 ```
+
+## Storage
+
+### Volumes
+
+```sh
+docker volume create ghost-vol
+docker volume ls
+docker volume inspect ghost-vol
+```
+
+### Run Ghost
+
+```sh
+docker pull ghost
+docker run -d \
+  -e NODE_ENV=development \
+  -e url=http://localhost:3001 \
+  -e database__connection__filename=/var/lib/ghost/content/data/ghost-dev.db \
+  -p 3001:2368 \
+  -v ghost-vol:/var/lib/ghost/content \
+  ghost
+```
+
+### Persist
+
+- A container's file system is read-write, but when you delete a container, and start a new one from the same image, that new container starts from scratch again with a copy of the image. All stateful changes are lost.
+- A volume's file system is read-write, but it lives outside a single container. If a container uses a volume, then stateful changes can be persisted to the volume even if the container is deleted.
+
+
+```sh
+docker ps
+docker stop CONTAINER_ID
+docker rm CONTAINER_ID
+docker run -d \
+  -e NODE_ENV=development \
+  -e url=http://localhost:3001 \
+  -e database__connection__filename=/var/lib/ghost/content/data/ghost-dev.db \
+  -p 3001:2368 \
+  -v ghost-vol:/var/lib/ghost/content \
+  ghost
+```
+
+### Delete volume
+
+```sh
+docker ps -a
+docker run -d \
+  -e NODE_ENV=development \
+  -e url=http://localhost:3001 \
+  -e database__connection__filename=/var/lib/ghost/content/data/ghost-dev.db \
+  -p 3001:2368 \
+  -v ghost-vol:/var/lib/ghost/content \
+  ghost
+docker volume ls
+docker stop <id>
+docker rm <id>
+docker volume rm ghost-vol
+```
+
+### Cleanup
+
+```sh
+docker ps -a
+docker volume ls
+```
