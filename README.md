@@ -348,4 +348,51 @@ docker top mem-stress
 
 ```sh
 docker run -d --cpus="0.25" --name cpu-stress alexeiled/stress-ng --cpu 2 --timeout 10m
+docker stats
+```
+
+## Publish
+
+### Publishing images
+
+Docker Hub is the official cloud service for storing and sharing Docker images.
+We call these kinds of services "registries".
+Other popular image registries include:
+
+- AWS ECR
+- GCP Artifact Registry
+- GitHub Container Registry
+- Harbor
+- Azure ACR
+
+```sh
+GOOS=linux GOARCH=amd64 go build
+docker build . -t mariolazzari/goserver
+docker run -p 8991:8991 mariolazzari/goserver
+docker push mariolazzari/goserver
+```
+
+### Delete and Pull
+
+```sh
+docker image rm mariolazzari/goserver
+docker pull mariolazzari/goserver
+docker run -p 8991:8991 mariolazzari/goserver
+```
+
+### Tags
+
+```sh
+docker build . -t mariolazzari/goserver:0.2.0
+docker run -p 8991:8991 mariolazzari/goserver:0.2.0
+docker push mariolazzari/goserver:0.2.0
+docker pull mariolazzari/goserver:0.2.0
+docker run -p 8991:8991 mariolazzari/goserver:0.2.0
+```
+
+### Latest
+
+```sh
+docker build -t bootdotdev/awesomeimage:5.4.6 -t bootdotdev/awesomeimage:latest .
+docker push bootdotdev/awesomeimage --all-tags
 ```
