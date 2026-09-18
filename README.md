@@ -29,7 +29,7 @@ docker images
 
 ### Run a container
 
-*docker run -d -p hostport:containerport namespace/name:tag*
+_docker run -d -p hostport:containerport namespace/name:tag_
 
 - -d: Run in detached mode (doesn't block your terminal)
 - -p: Publish a container's port to the host (forwarding)
@@ -45,8 +45,8 @@ docker ps
 
 ### Stop container
 
-- *docker stop*: This stops the container by issuing a SIGTERM signal to the container. You'll typically want to use docker stop.
-- *docker kill*: This stops the container by issuing a SIGKILL signal to the container. This is a more forceful way to stop a container, and should be used as a last resort.
+- _docker stop_: This stops the container by issuing a SIGTERM signal to the container. You'll typically want to use docker stop.
+- _docker kill_: This stops the container by issuing a SIGKILL signal to the container. This is a more forceful way to stop a container, and should be used as a last resort.
 
 ```sh
 docker ps
@@ -80,7 +80,6 @@ docker run -d \
 
 - A container's file system is read-write, but when you delete a container, and start a new one from the same image, that new container starts from scratch again with a copy of the image. All stateful changes are lost.
 - A volume's file system is read-write, but it lives outside a single container. If a container uses a volume, then stateful changes can be persisted to the volume even if the container is deleted.
-
 
 ```sh
 docker ps
@@ -156,7 +155,7 @@ exit
 
 ### Offline
 
-The docker run command has a *--network none* flag that makes it so that the container can't network with the outside world, which is super useful for isolating containers.
+The docker run command has a _--network none_ flag that makes it so that the container can't network with the outside world, which is super useful for isolating containers.
 
 ### Break network
 
@@ -209,4 +208,68 @@ reverse_proxy caddy1:80 caddy2:80 {
 
 ```sh
 docker run -d --network caddytest -p 8880:80 -v $PWD/Caddyfile:/etc/caddy/Caddyfile caddy
+curl http://localhost:8880/
+```
+
+## Dockerfiles
+
+### Dockerfile
+
+```Dockerfile
+# This is a comment
+
+# Use a lightweight debian os
+# as the base image
+FROM debian:stable-slim
+
+# execute the 'echo "hello world"'
+# command when the container runs
+CMD ["echo", "hello world"]
+```
+
+```sh
+docker build . -t helloworld:latest
+docker run helloworld
+docker ps -a
+```
+
+### Building a server
+
+```sh
+go mod init github.com/mariolazzari/bd-docker
+go build
+```
+
+### Dockerizing server
+
+```Dockerfile
+FROM debian:stable-slim
+
+# COPY source destination
+COPY bd-docker /bin/goserver
+
+CMD ["/bin/goserver"]
+```
+
+```sh
+docker build --platform linux/amd64 -t goserver:latest .
+docker run --rm -p 8010:8010 goserver:latest
+```
+
+### Enviroment vars
+
+```Dockerfile
+FROM debian:stable-slim
+
+ENV PORT=8991
+
+# COPY source destination
+COPY bd-docker /bin/goserver
+
+CMD ["/bin/goserver"]
+```
+
+```sh
+GOOS=linux GOARCH=amd64 go build
+docker build . -t goserver:latest
 ```
