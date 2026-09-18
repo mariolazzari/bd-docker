@@ -156,6 +156,57 @@ exit
 
 ### Offline
 
-```sh
+The docker run command has a *--network none* flag that makes it so that the container can't network with the outside world, which is super useful for isolating containers.
 
+### Break network
+
+```sh
+docker ps -a
+docker run -d --network none docker/getting-started
+docker exec CONTAINER_ID ping google.com -W 2
+```
+
+### Load balancers
+
+A load balancer behaves as advertised: it balances a load of network traffic across some number of servers.
+
+### Application Servers
+
+```sh
+docker pull caddy
+docker run -d -p 8881:80 -v $PWD/index1.html:/usr/share/caddy/index.html caddy
+docker run -d -p 8882:80 -v $PWD/index2.html:/usr/share/caddy/index.html caddy
+```
+
+### Custom Network
+
+```sh
+docker network create caddytest
+docker network ls
+docker run -d -p 8881:80 -v $PWD/index1.html:/usr/share/caddy/index.html caddy
+
+docker network create caddytest
+docker network ls
+
+docker run --name -d -p 8965:80 docker/getting-started
+docker run -d --name caddy1 --network caddytest -v $PWD/index1.html:/usr/share/caddy/index.html caddy
+docker run -d --name caddy2 --network caddytest -v $PWD/index2.html:/usr/share/caddy/index.html caddy
+docker run -it --network caddytest docker/getting-started /bin/sh
+
+#docker run --name caddy1 -d -p 8881:80 -v $PWD/index1.html:/usr/share/caddy/index.html caddy
+#docker run --name caddy2 -d -p 8882:80 -v $PWD/index2.html:/usr/share/caddy/index.html caddy
+```
+
+### Load ballancer config
+
+```sh
+localhost:80
+
+reverse_proxy caddy1:80 caddy2:80 {
+    lb_policy       round_robin
+}
+```
+
+```sh
+docker run -d --network caddytest -p 8880:80 -v $PWD/Caddyfile:/etc/caddy/Caddyfile caddy
 ```
