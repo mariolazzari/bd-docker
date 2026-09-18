@@ -309,3 +309,43 @@ CMD ["python3.10", "main.py"]
 docker build -t bookbot -f Dockerfile.py .
 docker run bookbot
 ```
+
+## Debug
+
+### Docker logs
+
+```sh
+docker logs [OPTIONS] CONTAINER
+docker run -d --name logdate alpine sh -c 'while true; do echo "LOGGING: $(date)"; sleep 1; done'
+docker ps
+docer logs
+# realtime logs
+docker logs -f logdate
+docker logs --tail 5 CONTAINER
+```
+
+### Stats
+
+```sh
+docker stats [OPTIONS] CONTAINER
+docker run -d --name cpu-stress alexeiled/stress-ng --cpu 2 --timeout 10m
+docker run -d --name mem-stress alexeiled/stress-ng --vm 1 --vm-bytes 1G --timeout 10m
+docker stats
+```
+
+### Top
+
+```sh
+docker top CONTAINER
+docker top CONTAINER [ps OPTIONS]
+# Check the processes in the CPU-intensive container
+docker top cpu-stress
+# Check the processes in the memory-intensive container
+docker top mem-stress
+```
+
+### Resource Limits
+
+```sh
+docker run -d --cpus="0.25" --name cpu-stress alexeiled/stress-ng --cpu 2 --timeout 10m
+```
